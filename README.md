@@ -44,3 +44,86 @@ Bagian-bagian berikut adalah **mekanik, parameter, dan konten** yang bisa diubah
 - **Jumlah kesempatan main (4) dan discard (3)** — bisa diubah per difficulty level.
 - **Jumlah ronde (5)** — bisa ditambah atau dikurangi.
 - **Formula bonus currency** — cara menghitung reward di akhir sesi bisa dimodifikasi.
+
+## Step 4 — Implement a C++ Core Loop Skeleton
+
+```cpp
+#include <iostream>
+#include <string>
+
+// Minimal single-file skeleton for the game's core loop
+
+class Player {
+public:
+    void PerformAction() {
+        std::cout << "Player: memilih kartu / action\n";
+    }
+};
+
+class SystemResolver {
+public:
+    void Resolve() {
+        std::cout << "System: mengevaluasi kombinasi & menghitung score\n";
+    }
+};
+
+class GameState {
+private:
+    int roundCount = 0;
+    const int maxRounds = 3; // placeholder
+    bool sessionCleared = false;
+
+public:
+    void Update() {
+        std::cout << "State: memperbarui blind / kesempatan / discard /inventory\n";
+        roundCount++;
+        if (roundCount >= maxRounds) sessionCleared = true;
+    }
+
+    bool IsGameOver() const {
+        return sessionCleared;
+    }
+};
+
+class ShopState {
+public:
+    void Open() {
+        std::cout << "Shop: membuka toko - tampilkan item, beli/jual\n";
+    }
+};
+
+class GameSession {
+private:
+    Player player;
+    SystemResolver resolver;
+    GameState state;
+    ShopState shop;
+
+public:
+    void StartGame() {
+        std::cout << "--- Mulai Game Session (skeleton) ---\n";
+        while (!state.IsGameOver()) {
+            // Phase 1: Player action
+            player.PerformAction();
+
+            // Phase 2: System resolves the action
+            resolver.Resolve();
+
+            // Phase 2.5: Shop state after resolving score
+            shop.Open();
+
+            // Phase 3: Update game state
+            state.Update();
+
+            std::cout << "--- Next Turn ---\n";
+        }
+        std::cout << "--- Session selesai ---\n";
+    }
+};
+
+int main() {
+    GameSession session;
+    session.StartGame();
+    return 0;
+}
+```
