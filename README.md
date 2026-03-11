@@ -127,3 +127,21 @@ int main() {
     return 0;
 }
 ```
+
+## Reflection
+
+1. What is the invariant structure of your game?
+
+Invariant dari permainan ini adalah rangkaian langkah yang membentuk core loop: draw kartu → pemain memilih action → sistem mengevaluasi kombinasi dan menghitung skor → (opsional) shop terbuka → update state dan cek kondisi menang/kalah. Bagian tersebut tidak akan berubah, karena jika berubah akan merusak tatanan game.
+
+2. What parts are mutable?
+
+Bagian yang bersifat mutable meliputi parameter numerik dan konten: jumlah kartu yang di-draw, target skor tiap blind, jumlah ronde, jumlah kesempatan main/discard, nilai base chips dan multiplier untuk kombinasi poker, daftar modifier di shop beserta harga dan efeknya, serta formula bonus currency.
+
+3. If you wanted to add a new feature, which class would change?
+
+Fitur terkait ekonomi atau item akan memodifikasi `ShopState`. Fitur scoring atau kombinasi baru akan mengubah `SystemResolver`. Jika menambah persisten player atau progresi, maka `GameState` akan diperluas.
+
+4. If you changed the loop order, what would break?
+
+Mengubah urutan akan merusak konsistensi logika: misalnya memanggil `state.Update()` sebelum `resolver.Resolve()` bisa membuat skor belum dihitung saat pengecekan kondisi, menyebabkan reward/penalti salah waktu. Membuka shop sebelum evaluasi akan memberi akses ke modifier sebelum efek skor diketahui, mengacaukan ekonomi game. Intinya, urutan menentukan kapan data (skor, kesempatan, inventory) tersedia dan siapa yang berwenang mengubahnya.
